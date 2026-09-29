@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>SPTech — 2 Simulados da 1ª Fase</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#111827;--muted:#667085;--line:#e5e7eb;--accent:#6d28d9;--accent2:#8b5cf6;--ok:#15803d;--bad:#b91c1c;--warn:#a16207}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit}
+.shell{max-width:980px;margin:auto;padding:18px 14px 42px}
+.hero{background:linear-gradient(135deg,#111827,#312e81 62%,#6d28d9);color:#fff;border-radius:24px;padding:24px;box-shadow:0 14px 40px rgba(17,24,39,.16)}
+.hero small{display:inline-block;background:rgba(255,255,255,.13);padding:6px 10px;border-radius:999px;font-weight:700}
+.hero h1{font-size:clamp(30px,6vw,54px);line-height:.98;margin:14px 0 12px;letter-spacing:-.04em}
+.hero p{max-width:760px;margin:0;color:#e9e7ff;line-height:1.55}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.11);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(17,24,39,.05)}
+.card h2{margin:0 0 6px;font-size:22px}.card p{margin:0;color:var(--muted);line-height:1.5}
+.card .stats{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.chip{background:#f3f4f6;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.primary,.ghost,.danger{border:0;border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer}
+.primary{background:var(--accent);color:#fff}.primary:hover{background:#5b21b6}
+.ghost{background:#eef2ff;color:#3730a3}.danger{background:#fee2e2;color:#991b1b}
+.note{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.5}
+.hidden{display:none!important}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(244,246,251,.92);backdrop-filter:blur(10px);padding:9px 0 10px}
+.topbar-inner{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:0 6px 18px rgba(17,24,39,.06)}
+.exam-name{font-weight:900}.progress-text{font-size:12px;color:var(--muted)}
+.timer{font-variant-numeric:tabular-nums;font-weight:900;font-size:20px;padding:7px 10px;background:#111827;color:#fff;border-radius:10px}
+.timer.low{background:#991b1b}
+.qcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin-top:12px}
+.qhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.qnum{font-size:13px;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:.08em}.tag{font-size:12px;background:#f3f4f6;padding:5px 8px;border-radius:999px;color:#475467}
+.qtext{font-size:20px;line-height:1.45;font-weight:750;margin:12px 0 16px}
+.context{background:#f8fafc;border-left:4px solid #c4b5fd;padding:13px 14px;border-radius:0 12px 12px 0;margin:4px 0 16px;color:#344054;line-height:1.55;white-space:pre-line}
+.options{display:grid;gap:9px}.option{width:100%;display:flex;gap:11px;text-align:left;align-items:flex-start;border:1px solid #d0d5dd;background:#fff;padding:13px;border-radius:13px;cursor:pointer}
+.option:hover{border-color:#a78bfa;background:#faf8ff}.option.selected{border:2px solid var(--accent);background:#f5f3ff;padding:12px}.letter{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f3f4f6;font-weight:900}
+.option.selected .letter{background:var(--accent);color:#fff}
+.navrow{display:flex;justify-content:space-between;gap:10px;margin:14px 0}.navrow .right{display:flex;gap:8px}
+.palette{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}
+.palette-title{font-weight:900;margin-bottom:10px}.nums{display:grid;grid-template-columns:repeat(10,1fr);gap:7px}.nbtn{border:0;border-radius:9px;padding:8px 0;background:#f2f4f7;font-size:12px;font-weight:800;cursor:pointer}.nbtn.answered{background:#ddd6fe;color:#4c1d95}.nbtn.current{outline:2px solid #111827}
+.result{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:14px}.score{font-size:56px;line-height:1;font-weight:950;letter-spacing:-.06em}.score span{font-size:20px;color:var(--muted);letter-spacing:0}
+.bar{height:12px;background:#eaecf0;border-radius:999px;overflow:hidden;margin:12px 0}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.mini{background:#f8fafc;padding:12px;border-radius:14px}.mini strong{display:block;font-size:22px}.review{margin-top:16px;display:grid;gap:10px}.review-item{border:1px solid var(--line);border-radius:14px;padding:14px}.review-item.ok{border-left:5px solid var(--ok)}.review-item.bad{border-left:5px solid var(--bad)}.review-item h4{margin:0 0 7px}.answerline{font-size:13px;color:#475467;line-height:1.5}.explain{margin-top:7px;color:#344054;line-height:1.5}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.hero{padding:20px}.nums{grid-template-columns:repeat(6,1fr)}.topbar-inner{grid-template-columns:1fr auto}.topbar .ghost{display:none}.qtext{font-size:18px}.breakdown{grid-template-columns:1fr}.score{font-size:48px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<section id="home">
+  <div class="hero">
+    <small>SPTECH • TREINO 1ª FASE</small>
+    <h1>2 simulados.<br>60 questões.</h1>
+    <p>Feitos para treinar o formato oficial da 1ª fase: matemática/raciocínio lógico, interpretação de textos/língua portuguesa e análise de gráficos/tabelas.</p>
+    <div class="meta"><span class="pill">30 questões por prova</span><span class="pill">90 min por prova</span><span class="pill">múltipla escolha</span><span class="pill">corrige na hora</span></div>
+  </div>
+  <div class="grid">
+    <article class="card">
+      <h2>Simulado 1</h2>
+      <p>Aquecimento realista: contas rápidas, lógica, interpretação e leitura de dados.</p>
+      <div class="stats"><span class="chip">12 Matemática/Lógica</span><span class="chip">10 Português</span><span class="chip">8 Dados</span></div>
+      <button class="primary" onclick="startExam(0)">Começar Simulado 1</button>
+    </article>
+    <article class="card">
+      <h2>Simulado 2</h2>
+      <p>Um pouco mais traiçoeiro: porcentagens sucessivas, proporção, inferência e tabelas.</p>
+      <div class="stats"><span class="chip">12 Matemática/Lógica</span><span class="chip">10 Português</span><span class="chip">8 Dados</span></div>
+      <button class="primary" onclick="startExam(1)">Começar Simulado 2</button>
+    </article>
+  </div>
+  <p class="note"><strong>Importante:</strong> material de treino independente, não oficial. A SPTech informa 30 questões em 90 minutos e conteúdo dessas três áreas. A pontuação mostrada aqui é uma conversão simples de acertos para 0–1000 e não reproduz o método oficial de correção.</p>
+</section>
+
+<section id="exam" class="hidden">
+  <div class="topbar"><div class="topbar-inner">
+    <div><div class="exam-name" id="examName"></div><div class="progress-text" id="progressText"></div></div>
+    <div class="timer" id="timer">90:00</div>
+    <button class="ghost" onclick="finishExam(false)">Finalizar</button>
+  </div></div>
+  <div class="qcard" id="qcard"></div>
+  <div class="navrow">
+    <button class="ghost" onclick="move(-1)">← Anterior</button>
+    <div class="right"><button class="ghost" onclick="move(1)">Próxima →</button><button class="primary" onclick="finishExam(false)">Entregar</button></div>
+  </div>
+  <div class="palette"><div class="palette-title">Questões</div><div class="nums" id="nums"></div></div>
+</section>
+
+<section id="results" class="hidden"></section>
+</div>
+<script>
+const exams=[
+{
+name:"Simulado 1",
+questions:[
+{cat:"Matemática / Lógica",q:"Uma mensalidade de R$ 240 recebeu desconto de 15%. Qual foi o valor do desconto?",o:["R$ 24","R$ 30","R$ 36","R$ 40","R$ 48"],a:2,e:"15% de 240 = 0,15 × 240 = 36."},
+{cat:"Matemática / Lógica",q:"Se uma máquina processa 4 arquivos em 18 minutos, mantendo o mesmo ritmo, quanto tempo leva para processar 10 arquivos?",o:["36 min","40 min","45 min","48 min","54 min"],a:2,e:"18/4 = 4,5 minutos por arquivo. 10 × 4,5 = 45 minutos."},
+{cat:"Matemática / Lógica",q:"Resolva: 3x − 7 = 20.",o:["7","8","9","10","11"],a:2,e:"3x = 27, então x = 9."},
+{cat:"Matemática / Lógica",q:"As notas 7, 8, 6, 9 e 10 têm média igual a:",o:["7,5","8","8,2","8,5","9"],a:1,e:"A soma é 40. 40/5 = 8."},
+{cat:"Matemática / Lógica",q:"Complete a sequência: 2, 6, 12, 20, 30, __.",o:["36","40","42","44","48"],a:2,e:"As diferenças são 4, 6, 8 e 10. A próxima é 12: 30 + 12 = 42."},
+{cat:"Matemática / Lógica",q:"Uma caixa tem 3 cartões vermelhos e 2 azuis. Retirando um ao acaso, a probabilidade de ele ser vermelho é:",o:["20%","40%","50%","60%","75%"],a:3,e:"Há 3 vermelhos entre 5 cartões: 3/5 = 60%."},
+{cat:"Matemática / Lógica",q:"Um retângulo mede 12 m por 7,5 m. Qual é sua área?",o:["19,5 m²","45 m²","78 m²","90 m²","108 m²"],a:3,e:"Área = base × altura = 12 × 7,5 = 90 m²."},
+{cat:"Matemática / Lógica",q:"Um produto de R$ 160 está com 25% de desconto. Qual é o preço final?",o:["R$ 100","R$ 110","R$ 120","R$ 125","R$ 140"],a:2,e:"25% de 160 = 40. 160 − 40 = 120."},
+{cat:"Matemática / Lógica",q:"Um carro percorre 180 km em 3 horas, com velocidade média constante. Sua velocidade média é:",o:["45 km/h","50 km/h","55 km/h","60 km/h","65 km/h"],a:3,e:"180/3 = 60 km/h."},
+{cat:"Matemática / Lógica",q:"Se x + y = 18 e x − y = 4, então x vale:",o:["7","9","10","11","14"],a:3,e:"Somando as equações: 2x = 22. Logo, x = 11."},
+{cat:"Matemática / Lógica",q:"Considere: “Todo desenvolvedor da equipe fez o treinamento. Ana é desenvolvedora da equipe.” Qual conclusão é necessariamente válida?",o:["Ana ministrou o treinamento","Ana fez o treinamento","Só Ana fez o treinamento","Ana foi a primeira a fazer o treinamento","Nada pode ser concluído"],a:1,e:"Se todos os desenvolvedores da equipe fizeram o treinamento e Ana pertence a esse grupo, então Ana fez o treinamento."},
+{cat:"Matemática / Lógica",q:"Uma pessoa tem 3 camisetas e 2 calças diferentes. Quantos conjuntos distintos de uma camiseta com uma calça ela pode formar?",o:["5","6","7","8","9"],a:1,e:"Princípio multiplicativo: 3 × 2 = 6 combinações."},
+
+{cat:"Português / Interpretação",ctx:"Uma equipe decidiu reduzir o número de reuniões semanais. Depois de um mês, percebeu que as tarefas continuavam sendo entregues no prazo e que os profissionais passaram a ter mais períodos longos de concentração.",q:"A principal ideia do texto é que:",o:["reuniões são sempre inúteis","a equipe deixou de cumprir prazos","reduzir reuniões pode liberar tempo de concentração sem prejudicar as entregas","os profissionais preferem trabalhar sozinhos","toda empresa deve eliminar reuniões"],a:2,e:"O texto relaciona a redução de reuniões a mais tempo de concentração, mantendo os prazos."},
+{cat:"Português / Interpretação",q:"Em “O sistema era simples, porém eficiente”, a palavra “porém” estabelece relação de:",o:["causa","conclusão","adição","oposição","explicação"],a:3,e:"“Porém” é conjunção adversativa e introduz contraste/oposição."},
+{cat:"Português / Interpretação",ctx:"Marina enviou o relatório a Paula depois que ela terminou a revisão.",q:"O principal problema dessa frase é:",o:["falta de verbo","ambiguidade do pronome “ela”","erro de concordância","ausência de pontuação","uso inadequado de plural"],a:1,e:"Não fica claro se “ela” retoma Marina ou Paula."},
+{cat:"Português / Interpretação",q:"Assinale a alternativa em que o uso da crase está adequado:",o:["Vou à escola amanhã.","Entreguei à ela o documento.","Cheguei à pé.","Fui à Curitiba.","Começou à estudar cedo."],a:0,e:"Em “à escola” ocorre a fusão da preposição a com o artigo a."},
+{cat:"Português / Interpretação",ctx:"A tecnologia não elimina automaticamente um problema antigo; muitas vezes, apenas muda a forma como ele aparece.",q:"O texto sugere que a tecnologia:",o:["sempre resolve problemas antigos","nunca produz benefícios","pode transformar a manifestação de um problema sem necessariamente resolvê-lo","deve ser evitada em problemas antigos","cria todos os problemas sociais"],a:2,e:"A ideia central é que mudar a forma de um problema não significa eliminá-lo."},
+{cat:"Português / Interpretação",q:"Em “Lucas, feche a janela, por favor.”, as vírgulas isolam:",o:["um aposto","um vocativo","uma oração subordinada","um adjunto adverbial","uma enumeração"],a:1,e:"“Lucas” é vocativo: termo usado para chamar/interpelar alguém."},
+{cat:"Português / Interpretação",q:"No contexto de “medidas para mitigar os riscos”, o verbo “mitigar” significa:",o:["aumentar","esconder","ignorar","reduzir","provar"],a:3,e:"Mitigar significa tornar menos intenso, reduzir ou atenuar."},
+{cat:"Português / Interpretação",ctx:"A biblioteca deveria abrir aos domingos. Muitos estudantes trabalham durante a semana e só dispõem do fim de semana para estudar com calma.",q:"O segundo período funciona principalmente como:",o:["uma contradição","um exemplo sem relação","uma justificativa para a opinião apresentada","uma definição de biblioteca","uma conclusão sem premissas"],a:2,e:"O segundo período fornece a razão que sustenta a proposta do primeiro."},
+{cat:"Português / Interpretação",q:"Assinale a frase de acordo com a norma-padrão:",o:["Haviam muitos candidatos na sala.","Fazem dois anos que estudo aqui.","Havia muitos candidatos na sala.","Existia muitas dúvidas.","Deve haverem soluções melhores."],a:2,e:"No sentido de existir, o verbo “haver” é impessoal: “Havia muitos candidatos”."},
+{cat:"Português / Interpretação",ctx:"“O aplicativo promete economizar tempo. Ainda assim, exige uma configuração inicial cuidadosa.”",q:"A expressão “Ainda assim” indica:",o:["continuidade sem contraste","contraste entre a promessa e uma exigência","causa direta","enumeração","definição"],a:1,e:"A expressão introduz uma ressalva/contraste em relação à ideia anterior."},
+
+{cat:"Gráficos / Tabelas",ctx:"Chamados resolvidos por uma equipe:
+Segunda: 40
+Terça: 50
+Quarta: 45
+Quinta: 60
+Sexta: 55",q:"Em qual dia houve o maior número de chamados resolvidos?",o:["Segunda","Terça","Quarta","Quinta","Sexta"],a:3,e:"O maior valor da tabela é 60, na quinta-feira."},
+{cat:"Gráficos / Tabelas",ctx:"Chamados resolvidos por uma equipe:
+Segunda: 40
+Terça: 50
+Quarta: 45
+Quinta: 60
+Sexta: 55",q:"Quantos chamados foram resolvidos ao todo na semana?",o:["230","240","250","260","270"],a:2,e:"40 + 50 + 45 + 60 + 55 = 250."},
+{cat:"Gráficos / Tabelas",ctx:"Chamados resolvidos por uma equipe:
+Segunda: 40
+Terça: 50
+Quarta: 45
+Quinta: 60
+Sexta: 55",q:"A média diária de chamados resolvidos foi:",o:["45","48","50","52","55"],a:2,e:"Total de 250 em 5 dias: 250/5 = 50."},
+{cat:"Gráficos / Tabelas",ctx:"Usuários ativos de um app:
+Janeiro: 800
+Fevereiro: 920
+Março: 1.000
+Abril: 960",q:"De janeiro para fevereiro, o número de usuários aumentou em:",o:["10%","12%","15%","18%","20%"],a:2,e:"Aumento de 120 sobre 800: 120/800 = 0,15 = 15%."},
+{cat:"Gráficos / Tabelas",ctx:"Usuários ativos de um app:
+Janeiro: 800
+Fevereiro: 920
+Março: 1.000
+Abril: 960",q:"De março para abril ocorreu:",o:["aumento de 4%","queda de 4%","queda de 40%","aumento de 40 usuários e 4%","nenhuma mudança"],a:1,e:"A queda foi 40 sobre 1.000, ou seja, 4%."},
+{cat:"Gráficos / Tabelas",ctx:"Tempo médio de atendimento:
+Canal A: 6 min
+Canal B: 9 min
+Canal C: 5 min
+Canal D: 10 min",q:"Qual é a diferença entre o maior e o menor tempo médio?",o:["3 min","4 min","5 min","6 min","15 min"],a:2,e:"Maior: 10. Menor: 5. Diferença = 5 minutos."},
+{cat:"Gráficos / Tabelas",ctx:"Vendas de três planos em um dia:
+Básico: 120
+Intermediário: 80
+Avançado: 50",q:"Que fração das 250 vendas corresponde ao plano Intermediário?",o:["16%","24%","30%","32%","40%"],a:3,e:"80/250 = 0,32 = 32%."},
+{cat:"Gráficos / Tabelas",ctx:"Taxa de conclusão de cursos:
+Curso X: 72%
+Curso Y: 81%
+Curso Z: 76%",q:"A diferença, em pontos percentuais, entre a maior e a menor taxa é:",o:["5","7","9","11","13"],a:2,e:"81% − 72% = 9 pontos percentuais."}
+]},
+{
+name:"Simulado 2",
+questions:[
+{cat:"Matemática / Lógica",q:"Um preço aumenta 20% e depois sofre desconto de 20% sobre o novo valor. Em relação ao preço inicial, o valor final é:",o:["80%","96%","100%","104%","120%"],a:1,e:"1,20 × 0,80 = 0,96. O preço final é 96% do inicial."},
+{cat:"Matemática / Lógica",q:"Dois grupos estão na razão 3:5 e, juntos, têm 64 pessoas. Quantas pessoas há no grupo menor?",o:["16","20","24","32","40"],a:2,e:"São 8 partes. Cada parte vale 64/8 = 8. O grupo menor tem 3 × 8 = 24."},
+{cat:"Matemática / Lógica",q:"Uma corrida custa R$ 6 de tarifa fixa mais R$ 2,50 por quilômetro. Quanto custa uma corrida de 10 km?",o:["R$ 25","R$ 26","R$ 28,50","R$ 31","R$ 35"],a:3,e:"6 + 2,50 × 10 = 31."},
+{cat:"Matemática / Lógica",q:"A mediana dos valores 4, 7, 7, 9 e 15 é:",o:["7","8","8,4","9","15"],a:0,e:"Com cinco valores ordenados, a mediana é o termo central: 7."},
+{cat:"Matemática / Lógica",q:"Complete: 1, 4, 9, 16, __.",o:["20","21","24","25","32"],a:3,e:"São quadrados perfeitos: 1², 2², 3², 4², então 5² = 25."},
+{cat:"Matemática / Lógica",q:"Uma solução de 2 L contém 30% de concentrado. Acrescenta-se 1 L de água. A nova porcentagem de concentrado é:",o:["10%","15%","20%","25%","30%"],a:2,e:"Há 0,6 L de concentrado. O volume final é 3 L. 0,6/3 = 20%."},
+{cat:"Matemática / Lógica",q:"Num mapa de escala 1:50.000, uma distância mede 4 cm. Na realidade, ela corresponde a:",o:["200 m","500 m","1 km","2 km","20 km"],a:3,e:"4 × 50.000 = 200.000 cm = 2.000 m = 2 km."},
+{cat:"Matemática / Lógica",q:"R$ 1.200 são aplicados a juros simples de 2% ao mês por 5 meses. Qual é o montante?",o:["R$ 1.260","R$ 1.300","R$ 1.320","R$ 1.360","R$ 1.440"],a:2,e:"J = 1200 × 0,02 × 5 = 120. Montante = 1320."},
+{cat:"Matemática / Lógica",q:"Se 6 trabalhadores fazem uma tarefa em 8 dias, no mesmo ritmo, 12 trabalhadores fariam a mesma tarefa em:",o:["2 dias","3 dias","4 dias","6 dias","16 dias"],a:2,e:"Dobrar o número de trabalhadores reduz pela metade o tempo: 4 dias."},
+{cat:"Matemática / Lógica",q:"As soluções de x² − 5x + 6 = 0 são 2 e 3. Portanto, a menor solução é:",o:["−3","−2","0","2","3"],a:3,e:"Fatorando: (x−2)(x−3)=0. As raízes são 2 e 3."},
+{cat:"Matemática / Lógica",q:"Da afirmação “Alguns alunos que trabalham também estudam à noite”, pode-se concluir necessariamente que:",o:["todos os alunos trabalham","todos os que trabalham estudam à noite","existe pelo menos um aluno que trabalha e estuda à noite","nenhum aluno estuda de manhã","a maioria trabalha"],a:2,e:"“Alguns” garante apenas a existência de pelo menos um elemento com as duas características."},
+{cat:"Matemática / Lógica",q:"Às 3h00, o menor ângulo entre os ponteiros de um relógio é:",o:["30°","60°","90°","120°","180°"],a:2,e:"Às 3h, o ponteiro dos minutos está no 12 e o das horas no 3: 90°."},
+
+{cat:"Português / Interpretação",ctx:"Automatizar uma tarefa não significa necessariamente eliminar o trabalho humano. Em muitos casos, a automação desloca o esforço: diminui a execução repetitiva e aumenta a necessidade de supervisão, análise e decisão.",q:"Segundo o texto, a automação pode:",o:["eliminar todo trabalho humano","substituir análise por repetição","mudar o tipo de trabalho exigido","tornar supervisão desnecessária","impedir decisões humanas"],a:2,e:"O texto afirma que o esforço se desloca da repetição para supervisão, análise e decisão."},
+{cat:"Português / Interpretação",q:"Assinale a opção correta: “Não sei ___ o sistema falhou.”",o:["porque","porquê","por que","porquê de","por quê"],a:2,e:"Em pergunta indireta, usa-se “por que”: não sei por que o sistema falhou."},
+{cat:"Português / Interpretação",q:"Em “Os dados foram revisados; portanto, o relatório pôde ser enviado”, “portanto” indica:",o:["oposição","causa","conclusão","condição","comparação"],a:2,e:"“Portanto” introduz uma conclusão/consequência do que foi dito antes."},
+{cat:"Português / Interpretação",q:"Em “A cidade acordou com fome de notícias”, a expressão “com fome de notícias” é usada em sentido:",o:["literal","técnico","denotativo apenas","figurado","matemático"],a:3,e:"A fome é metafórica: representa forte desejo por notícias."},
+{cat:"Português / Interpretação",q:"Assinale a frase com concordância adequada:",o:["Faltou duas páginas no relatório.","Faltaram duas páginas no relatório.","Existe muitos motivos.","Houveram atrasos ontem.","Fazem três meses desde a mudança."],a:1,e:"O sujeito “duas páginas” está no plural, então: “Faltaram duas páginas”."},
+{cat:"Português / Interpretação",q:"A palavra “saída” recebe acento porque:",o:["é oxítona terminada em a","é paroxítona terminada em a","há hiato com i tônico","é proparoxítona","todo ditongo é acentuado"],a:2,e:"Em sa-í-da, o “i” tônico forma hiato e recebe acento."},
+{cat:"Português / Interpretação",ctx:"Se um aplicativo coleta dados sem explicar por quê, o usuário realmente pode dizer que consentiu?",q:"A pergunta no texto serve principalmente para:",o:["pedir uma resposta numérica","introduzir uma reflexão crítica","descrever uma interface","dar uma ordem direta","informar um endereço"],a:1,e:"É uma pergunta retórica que convida o leitor a questionar a validade do consentimento."},
+{cat:"Português / Interpretação",ctx:"1. Conecte o cabo.
+2. Aguarde a luz azul.
+3. Pressione o botão por três segundos.",q:"Esse trecho pertence mais provavelmente a:",o:["um poema","uma notícia","um manual de instruções","um conto","uma crônica"],a:2,e:"A sequência de comandos numerados é típica de instruções de uso."},
+{cat:"Português / Interpretação",ctx:"O projeto atrasou duas semanas. Mesmo assim, a equipe decidiu não remover a etapa de testes.",q:"Pode-se inferir que a equipe:",o:["considerou os testes dispensáveis","preferiu preservar a etapa de testes apesar do atraso","terminou antes do prazo","não conhecia o cronograma","removeu todas as etapas finais"],a:1,e:"“Mesmo assim” mostra que, apesar do atraso, a etapa de testes foi mantida."},
+{cat:"Português / Interpretação",q:"Em “Embora estivesse cansada, ela terminou a tarefa”, a oração iniciada por “Embora” expressa:",o:["causa","concessão","conclusão","finalidade","tempo"],a:1,e:"“Embora” introduz uma ideia concessiva: um obstáculo que não impede o fato principal."},
+
+{cat:"Gráficos / Tabelas",ctx:"Acessos a uma plataforma:
+08h: 120
+10h: 180
+12h: 240
+14h: 210
+16h: 300",q:"Entre quais horários ocorreu a única queda?",o:["08h–10h","10h–12h","12h–14h","14h–16h","Não houve queda"],a:2,e:"Os acessos caem de 240, às 12h, para 210, às 14h."},
+{cat:"Gráficos / Tabelas",ctx:"Acessos a uma plataforma:
+08h: 120
+10h: 180
+12h: 240
+14h: 210
+16h: 300",q:"O aumento de 08h para 16h foi de:",o:["100 acessos","120 acessos","150 acessos","180 acessos","200 acessos"],a:3,e:"300 − 120 = 180 acessos."},
+{cat:"Gráficos / Tabelas",ctx:"Acessos a uma plataforma:
+08h: 120
+10h: 180
+12h: 240
+14h: 210
+16h: 300",q:"O valor de 16h representa quantos por cento do valor de 08h?",o:["150%","200%","225%","250%","300%"],a:3,e:"300/120 = 2,5 = 250%."},
+{cat:"Gráficos / Tabelas",ctx:"Tempo de estudo por semana:
+Ana: 6 h
+Bruno: 8 h
+Caio: 5 h
+Duda: 11 h",q:"Qual é a média semanal do grupo?",o:["6 h","7 h","7,5 h","8 h","9 h"],a:2,e:"(6+8+5+11)/4 = 30/4 = 7,5 h."},
+{cat:"Gráficos / Tabelas",ctx:"Distribuição de 500 inscrições:
+ADS: 220
+Ciência da Computação: 170
+Sistemas de Informação: 110",q:"Qual percentual das inscrições corresponde a ADS?",o:["22%","34%","40%","44%","55%"],a:3,e:"220/500 = 0,44 = 44%."},
+{cat:"Gráficos / Tabelas",ctx:"Erros encontrados por versão:
+v1: 48
+v2: 36
+v3: 27
+v4: 18",q:"Da v1 para a v4, a quantidade de erros caiu em:",o:["20","24","30","32","66"],a:2,e:"48 − 18 = 30 erros."},
+{cat:"Gráficos / Tabelas",ctx:"Consumo de energia:
+Janeiro: 400 kWh
+Fevereiro: 360 kWh
+Março: 390 kWh",q:"De janeiro para fevereiro, houve redução de:",o:["4%","8%","10%","11%","40%"],a:2,e:"A queda foi de 40 sobre 400: 10%."},
+{cat:"Gráficos / Tabelas",ctx:"Pesquisa com 200 pessoas:
+Opção A: 90
+Opção B: 70
+Opção C: 40",q:"Quantas pessoas a mais escolheram A do que C?",o:["20","30","40","50","60"],a:3,e:"90 − 40 = 50 pessoas."}
+]}
+];
+
+let activeExam=0,current=0,answers=[],remaining=5400,tick=null,startedAt=0;
+function startExam(i){
+ activeExam=i;current=0;answers=Array(30).fill(null);remaining=5400;startedAt=Date.now();
+ document.getElementById("home").classList.add("hidden");document.getElementById("results").classList.add("hidden");document.getElementById("exam").classList.remove("hidden");
+ document.getElementById("examName").textContent=exams[i].name;
+ clearInterval(tick);tick=setInterval(()=>{remaining--;drawTimer();if(remaining<=0){clearInterval(tick);finishExam(true)}},1000);
+ drawTimer();render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function drawTimer(){
+ const m=Math.floor(Math.max(0,remaining)/60),s=Math.max(0,remaining)%60;
+ const el=document.getElementById("timer");el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ el.classList.toggle("low",remaining<=600);
+}
+function render(){
+ const q=exams[activeExam].questions[current];
+ document.getElementById("progressText").textContent="Questão "+(current+1)+" de 30 • "+answers.filter(v=>v!==null).length+" respondidas";
+ let h='<div class="qhead"><div class="qnum">Questão '+(current+1)+'</div><div class="tag">'+q.cat+'</div></div>';
+ if(q.ctx)h+='<div class="context">'+q.ctx+'</div>';
+ h+='<div class="qtext">'+q.q+'</div><div class="options">';
+ q.o.forEach((op,idx)=>{h+='<button class="option '+(answers[current]===idx?'selected':'')+'" onclick="choose('+idx+')"><span class="letter">'+String.fromCharCode(65+idx)+'</span><span>'+op+'</span></button>'});
+ h+='</div>';document.getElementById("qcard").innerHTML=h;
+ const nums=document.getElementById("nums");nums.innerHTML="";
+ for(let i=0;i<30;i++){const b=document.createElement("button");b.className="nbtn "+(answers[i]!==null?"answered ":"")+(i===current?"current":"");b.textContent=i+1;b.onclick=()=>{current=i;render();window.scrollTo({top:0,behavior:"smooth"})};nums.appendChild(b)}
+}
+function choose(i){answers[current]=i;render()}
+function move(d){current=Math.max(0,Math.min(29,current+d));render();window.scrollTo({top:0,behavior:"smooth"})}
+function finishExam(auto){
+ const unanswered=answers.filter(v=>v===null).length;
+ if(!auto && unanswered>0 && !confirm("Você ainda deixou "+unanswered+" questão(ões) em branco. Entregar mesmo assim?"))return;
+ clearInterval(tick);
+ const qs=exams[activeExam].questions;let correct=0;const cats={};
+ qs.forEach((q,i)=>{if(!cats[q.cat])cats[q.cat]={ok:0,total:0};cats[q.cat].total++;if(answers[i]===q.a){correct++;cats[q.cat].ok++}});
+ const pct=Math.round(correct/30*100),pts=Math.round(correct/30*1000),used=Math.min(5400,Math.round((Date.now()-startedAt)/1000));
+ const um=Math.floor(used/60),us=used%60;
+ document.getElementById("exam").classList.add("hidden");const res=document.getElementById("results");res.classList.remove("hidden");
+ let h='<div class="result"><div class="qnum">'+exams[activeExam].name+' • resultado</div><div class="score">'+correct+'<span>/30</span></div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><strong>'+pct+'% de acertos</strong> • conversão simples: <strong>'+pts+'/1000</strong> • tempo: '+um+'m '+String(us).padStart(2,"0")+'s</p>';
+ h+='<div class="breakdown">';
+ Object.keys(cats).forEach(k=>{h+='<div class="mini"><span>'+k+'</span><strong>'+cats[k].ok+'/'+cats[k].total+'</strong></div>'});
+ h+='</div><p class="note">A conversão para 0–1000 é só uma referência de treino; não é o cálculo oficial da SPTech.</p><div class="navrow"><button class="primary" onclick="startExam('+activeExam+')">Refazer</button><button class="ghost" onclick="goHome()">Voltar aos simulados</button></div>';
+ h+='<div class="review"><h3>Correção comentada</h3>';
+ qs.forEach((q,i)=>{const ok=answers[i]===q.a;const mine=answers[i]===null?'Em branco':String.fromCharCode(65+answers[i])+' — '+q.o[answers[i]];const right=String.fromCharCode(65+q.a)+' — '+q.o[q.a];h+='<div class="review-item '+(ok?'ok':'bad')+'"><h4>'+(i+1)+'. '+(ok?'Acertou':'Revisar')+'</h4><div class="answerline"><strong>Sua resposta:</strong> '+mine+'<br><strong>Correta:</strong> '+right+'</div><div class="explain">'+q.e+'</div></div>'});
+ h+='</div></div>';res.innerHTML=h;window.scrollTo({top:0,behavior:"smooth"});
+}
+function goHome(){clearInterval(tick);document.getElementById("results").classList.add("hidden");document.getElementById("exam").classList.add("hidden");document.getElementById("home").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}
+</script>
+</body>
+</html>
