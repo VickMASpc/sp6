@@ -1,0 +1,35 @@
+export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const num=(v,d=0)=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+export const money=v=>v==null?'—':'$'+num(v,v<.01?4:2);
+export const compact=v=>v==null?'—':Math.abs(v)>=1e6?num(v/1e6,1)+'M':Math.abs(v)>=1000?num(v/1000,1)+'k':num(v,0);
+export const seconds=v=>v==null?'—':num(v,2)+'s';
+const point=(p,x,y,r=4)=>`<circle class="chart-point" cx="${x}" cy="${y}" r="${r}" fill="${p.color}" stroke="#121923" stroke-width="1.5" tabindex="0" role="button" aria-label="${esc(p.tip)}" data-tip="${esc(p.tip)}" ${p.id?`data-point="${esc(p.id)}"`:''}><title>${esc(p.tip)}</title></circle>`;
+const empty=()=>'<div class="empty">No available measurements for the selected models.</div>';
+const svg=(w,h,s,label)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">${s}</svg>`;
+function nice(max,n=5){if(max<=0)return 1;const base=10**Math.floor(Math.log10(max/n)),d=max/n/base;return (d<=1?1:d<=2?2:d<=5?5:10)*base}
+export function scatter(el,series,{xLabel='Cost per task (USD)',yLabel='AA Intelligence Index',log=true,xFormat=money,yFormat=v=>num(v),yMin=0,yMax,frontier=false}={}){
+ const ps=series.flatMap(s=>s.points.map(p=>({...p,color:s.color}))).filter(p=>p.x!=null&&p.y!=null&&(!log||p.x>0));if(!ps.length){el.innerHTML=empty();return}
+ const w=Math.max(480,el.clientWidth-24),h=350,L=58,R=22,T=20,B=64,pw=w-L-R,ph=h-T-B;
+ const xs=ps.map(p=>p.x),ys=ps.map(p=>p.y);let xmin=log?10**Math.floor(Math.log10(Math.min(...xs))):0,xmax=log?10**Math.ceil(Math.log10(Math.max(...xs))):Math.max(...xs)*1.15;if(xmax===xmin)xmax=xmin*10;
+ const ymax=yMax??Math.ceil(Math.max(...ys)/nice(Math.max(...ys)))*nice(Math.max(...ys));const ymin=Math.min(yMin,Math.min(...ys));
+ const X=v=>L+(log?(Math.log10(v)-Math.log10(xmin))/(Math.log10(xmax)-Math.log10(xmin)):(v-xmin)/(xmax-xmin))*pw,Y=v=>T+ph-(v-ymin)/(ymax-ymin||1)*ph;
+ let s='';for(let i=0;i<=5;i++){let v=ymin+(ymax-ymin)*i/5,y=Y(v);s+=`<line class="gridline" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/><text x="${L-10}" y="${y+4}" text-anchor="end">${esc(yFormat(v))}</text>`}
+ let xt=log?Array.from({length:Math.round(Math.log10(xmax/xmin))+1},(_,i)=>xmin*10**i):Array.from({length:5},(_,i)=>xmin+(xmax-xmin)*i/4);
+ xt.forEach(v=>{let x=X(v);s+=`<line class="gridline" x1="${x}" x2="${x}" y1="${T}" y2="${T+ph}"/><text x="${x}" y="${T+ph+24}" text-anchor="middle">${esc(xFormat(v))}</text>`});
+ if(frontier){let best=-Infinity,fp=[];for(const p of [...ps].sort((a,b)=>a.x-b.x||b.y-a.y)){if(p.y>best){fp.push(p);best=p.y}}s+=`<path d="${fp.map((p,i)=>(i?'L':'M')+X(p.x)+','+Y(p.y)).join(' ')}" fill="none" stroke="#cfd6e3" stroke-dasharray="4 5" stroke-width="1.5" opacity=".45"/>`}
+ for(const ss of series){const pp=ss.points.filter(p=>p.x!=null&&p.y!=null&&(!log||p.x>0));s+=`<path d="${pp.map((p,i)=>(i?'L':'M')+X(p.x)+','+Y(p.y)).join(' ')}" fill="none" stroke="${ss.color}" stroke-width="2" opacity=".65"/>`;pp.forEach((p,i)=>{s+=point({...p,color:ss.color},X(p.x),Y(p.y),i===pp.length-1?6:4)})}
+ s+=`<line class="axis" x1="${L}" x2="${w-R}" y1="${T+ph}" y2="${T+ph}"/><text class="axis-title" x="${L+pw/2}" y="${h-10}" text-anchor="middle">${esc(xLabel)}${log?' · log scale':''}</text><text class="axis-title" transform="translate(16,${T+ph/2}) rotate(-90)" text-anchor="middle">${esc(yLabel)}</text>`;el.innerHTML=svg(w,h,s,yLabel+' versus '+xLabel)
+}
+export function lines(el,series,{labels=['None','Low','Medium','High','Xhigh','Max'],yLabel='AA Intelligence Index',yFormat=v=>num(v),yMin=0,yMax}={}){
+ const ps=series.flatMap(s=>s.points).filter(p=>p.y!=null);if(!ps.length){el.innerHTML=empty();return}
+ const w=Math.max(450,el.clientWidth-24),h=350,L=55,R=22,T=20,B=55,pw=w-L-R,ph=h-T-B;const ymax=yMax??Math.ceil(Math.max(...ps.map(p=>p.y))/nice(Math.max(...ps.map(p=>p.y))))*nice(Math.max(...ps.map(p=>p.y)));const ymin=Math.min(yMin,Math.min(...ps.map(p=>p.y)));const X=i=>L+pw*i/(labels.length-1||1),Y=v=>T+ph-(v-ymin)/(ymax-ymin||1)*ph;
+ let s='';for(let i=0;i<=5;i++){let v=ymin+(ymax-ymin)*i/5,y=Y(v);s+=`<line class="gridline" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/><text x="${L-10}" y="${y+4}" text-anchor="end">${esc(yFormat(v))}</text>`}labels.forEach((l,i)=>s+=`<text x="${X(i)}" y="${h-26}" text-anchor="middle">${esc(l)}</text>`);
+ for(const ss of series){const pp=ss.points.filter(p=>p.y!=null);s+=`<path d="${pp.map((p,i)=>(i?'L':'M')+X(p.x)+','+Y(p.y)).join(' ')}" fill="none" stroke="${ss.color}" stroke-width="2.5"/>`;pp.forEach(p=>s+=point({...p,color:ss.color},X(p.x),Y(p.y),4.5))}
+ s+=`<text class="axis-title" transform="translate(15,${T+ph/2}) rotate(-90)" text-anchor="middle">${esc(yLabel)}</text>`;el.innerHTML=svg(w,h,s,yLabel+' by reasoning effort')
+}
+export function bars(el,rows,{keys=[{key:'value',label:'Value',color:'#a590ff'}],format=compact,label='Value',log=false}={}){
+ rows=rows.filter(r=>keys.some(k=>r[k.key]!=null));if(!rows.length){el.innerHTML=empty();return}
+ const w=Math.max(500,el.clientWidth-24),L=145,R=90,T=20,rowH=39,h=Math.max(140,T+rows.length*rowH+36),pw=w-L-R,max=Math.max(...rows.map(r=>keys.reduce((n,k)=>n+(r[k.key]??0),0)),.0001);let s='';
+ rows.forEach((r,i)=>{let y=T+i*rowH,total=keys.reduce((n,k)=>n+(r[k.key]??0),0),start=L;s+=`<text x="${L-12}" y="${y+17}" text-anchor="end" style="fill:${r.color??'#a6b3c9'}">${esc(r.label)}</text><rect x="${L}" y="${y+1}" width="${pw}" height="23" rx="3" fill="#1c2534"/>`;for(const k of keys){let val=r[k.key]??0,size=val/max*pw;s+=`<rect x="${start}" y="${y+1}" width="${size}" height="23" fill="${k.color??r.color??'#a590ff'}" data-tip="${esc(r.label+'\n'+k.label+': '+format(val))}"><title>${esc(k.label+': '+format(val))}</title></rect>`;start+=size}s+=`<text class="chart-value" x="${L+pw+12}" y="${y+17}">${esc(format(total))}</text>`});s+=`<text x="${L}" y="${h-8}">${esc(label)} · linear scale</text>`;el.innerHTML=svg(w,h,s,label)
+}
+export function radar(el,series,axes){const w=Math.max(450,el.clientWidth-24),h=370,cx=w/2,cy=175,r=115,n=axes.length;const P=(i,v)=>[cx+Math.sin(i*2*Math.PI/n)*r*v,cy-Math.cos(i*2*Math.PI/n)*r*v];let s='';for(let j=1;j<=4;j++)s+=`<polygon points="${axes.map((_,i)=>P(i,j/4).join(',')).join(' ')}" fill="none" stroke="#354155"/>`;axes.forEach((a,i)=>{const [x,y]=P(i,1.25);s+=`<text x="${x}" y="${y}" text-anchor="${x<cx-20?'end':x>cx+20?'start':'middle'}">${esc(a.label)}</text>`});for(const ss of series){if(ss.values.some(v=>v==null))continue;s+=`<polygon points="${ss.values.map((v,i)=>P(i,v/100).join(',')).join(' ')}" fill="${ss.color}" fill-opacity=".12" stroke="${ss.color}" stroke-width="2"/>`;ss.values.forEach((v,i)=>{const [x,y]=P(i,v/100);s+=point({color:ss.color,tip:ss.name+'\n'+axes[i].label+': '+num(v,1)},x,y)})}s+=`<text x="${cx}" y="${h-13}" text-anchor="middle">Capability indexes · fixed 0–100 scale</text>`;el.innerHTML=svg(w,h,s,'Capability comparison radar')}
