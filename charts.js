@@ -1,8 +1,9 @@
 export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export const num=(v,d=0)=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
-export const money=v=>v==null?'—':'$'+num(v,v<.01?4:2);
-export const compact=v=>v==null?'—':Math.abs(v)>=1e6?num(v/1e6,1)+'M':Math.abs(v)>=1000?num(v/1000,1)+'k':num(v,0);
-export const seconds=v=>v==null?'—':num(v,2)+'s';
+const missing=v=>v==null||!Number.isFinite(Number(v));
+export const num=(v,d=0)=>missing(v)?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+export const money=v=>missing(v)?'—':'$'+num(v,v<.01?4:2);
+export const compact=v=>missing(v)?'—':Math.abs(v)>=1e6?num(v/1e6,1)+'M':Math.abs(v)>=1000?num(v/1000,1)+'k':num(v,0);
+export const seconds=v=>missing(v)?'—':num(v,2)+'s';
 const point=(p,x,y,r=4)=>`<circle class="chart-point" cx="${x}" cy="${y}" r="${r}" fill="${p.color}" stroke="#121923" stroke-width="1.5" tabindex="0" role="button" aria-label="${esc(p.tip)}" data-tip="${esc(p.tip)}" ${p.id?`data-point="${esc(p.id)}"`:''}><title>${esc(p.tip)}</title></circle>`;
 const empty=()=>'<div class="empty">No available measurements for the selected models.</div>';
 const svg=(w,h,s,label)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">${s}</svg>`;
@@ -22,7 +23,7 @@ export function scatter(el,series,{xLabel='Cost per task (USD)',yLabel='AA Intel
 }
 export function lines(el,series,{labels=['None','Low','Medium','High','Xhigh','Max'],yLabel='AA Intelligence Index',yFormat=v=>num(v),yMin=0,yMax}={}){
  const ps=series.flatMap(s=>s.points).filter(p=>p.y!=null);if(!ps.length){el.innerHTML=empty();return}
- const w=Math.max(450,el.clientWidth-24),h=350,L=55,R=22,T=20,B=55,pw=w-L-R,ph=h-T-B;const ymax=yMax??Math.ceil(Math.max(...ps.map(p=>p.y))/nice(Math.max(...ps.map(p=>p.y))))*nice(Math.max(...ps.map(p=>p.y)));const ymin=Math.min(yMin,Math.min(...ps.map(p=>p.y)));const X=i=>L+pw*i/(labels.length-1||1),Y=v=>T+ph-(v-ymin)/(ymax-ymin||1)*ph;
+ const w=Math.max(320,el.clientWidth-24),h=350,L=55,R=26,T=20,B=55,pw=w-L-R,ph=h-T-B;const ymax=yMax??Math.ceil(Math.max(...ps.map(p=>p.y))/nice(Math.max(...ps.map(p=>p.y))))*nice(Math.max(...ps.map(p=>p.y)));const ymin=Math.min(yMin,Math.min(...ps.map(p=>p.y)));const X=i=>L+pw*i/(labels.length-1||1),Y=v=>T+ph-(v-ymin)/(ymax-ymin||1)*ph;
  let s='';for(let i=0;i<=5;i++){let v=ymin+(ymax-ymin)*i/5,y=Y(v);s+=`<line class="gridline" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/><text x="${L-10}" y="${y+4}" text-anchor="end">${esc(yFormat(v))}</text>`}labels.forEach((l,i)=>s+=`<text x="${X(i)}" y="${h-26}" text-anchor="middle">${esc(l)}</text>`);
  for(const ss of series){const pp=ss.points.filter(p=>p.y!=null);s+=`<path d="${pp.map((p,i)=>(i?'L':'M')+X(p.x)+','+Y(p.y)).join(' ')}" fill="none" stroke="${ss.color}" stroke-width="2.5"/>`;pp.forEach(p=>s+=point({...p,color:ss.color},X(p.x),Y(p.y),4.5))}
  s+=`<text class="axis-title" transform="translate(15,${T+ph/2}) rotate(-90)" text-anchor="middle">${esc(yLabel)}</text>`;el.innerHTML=svg(w,h,s,yLabel+' by reasoning effort')
